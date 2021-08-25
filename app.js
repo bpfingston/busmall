@@ -47,13 +47,15 @@ function randomizeItems() {
     const unavailableItems = [leftIndex, midIndex, rightIndex];
     for(var i = 0; i < 3; i++){
 
-      while (unavailableItems.includes(leftIndex) || leftIndex === null ||  leftIndex === rightIndex || leftIndex === midIndex) {
+      while (unavailableItems.includes(leftIndex)) {
         leftIndex = Math.floor(Math.random() * Item.allItems.length);
       }
-      while (unavailableItems.includes(rightIndex) || rightIndex === null  || rightIndex ===  leftIndex || rightIndex === midIndex) {
+          unavailableItems.push(leftIndex);
+      while (unavailableItems.includes(rightIndex)) {
         rightIndex = Math.floor(Math.random() * Item.allItems.length);
       }
-      while (unavailableItems.includes(midIndex) || midIndex === null  || midIndex === rightIndex || midIndex === leftIndex) {
+          unavailableItems.push(rightIndex);
+      while (unavailableItems.includes(midIndex)) {
         midIndex = Math.floor(Math.random() * Item.allItems.length);
       }
   }
@@ -74,8 +76,11 @@ function renderThreeItems(left_Item, mid_Item, right_Item) {
   function eventHandler(event) {
     if (event.target === leftImg || event.target === rightImg || event.target === midImg) {
       guesses--;
+      console.log(Item.allItems)
       if (event.target === leftImg) {
+        // console.log(Item.allItems[leftIndex].vote)
         Item.allItems[leftIndex].vote++;
+        // console.log(Item.allItems[leftIndex].vote)
       } else if (event.target === rightImg){
         Item.allItems[rightIndex].vote++;
       } else if (event.target === midImg){
@@ -93,6 +98,7 @@ function renderThreeItems(left_Item, mid_Item, right_Item) {
     if (event.target === myButton) {
       renderItems();
       renderChart();
+      storeItems();
       myButton.removeEventListener('click', buttonEvent)
     }
   }
@@ -145,6 +151,50 @@ function renderThreeItems(left_Item, mid_Item, right_Item) {
   });
   }
 
+  function itemRetrieval() {
+    const stringifiedItems = localStorage.getItem('totals');
+    if (stringifiedItems !== null) {
+      const parsedItems = JSON.parse(stringifiedItems);
+      console.log(parsedItems);
+      for (let item of parsedItems) {
+        const myItem = new Item(item.name, item.img);
+        myItem.vote = parseInt(item.vote);
+        myItem.shown = parseInt(item.shown);
+        Item.allItems.push(myItem);
+        console.log(Item.allItems)
+
+      }
+    } else {
+
+      Item.allItems.push(new Item('banana', './img/banana.jpg'));
+      Item.allItems.push(new Item('bathroom', './img/bathroom.jpg'));
+      Item.allItems.push(new Item('boots', './img/boots.jpg'));
+      Item.allItems.push(new Item('breakfast', './img/breakfast.jpg'));
+      Item.allItems.push(new Item('bubblegum', './img/bubblegum.jpg'));
+      Item.allItems.push(new Item('Chair', './img/chair.jpg'));
+      Item.allItems.push(new Item('cthulhu', './img/cthulhu.jpg'));
+      Item.allItems.push(new Item('dog-duck', './img/dog-duck.jpg'));
+      Item.allItems.push(new Item('dragon', './img/dragon.jpg'));
+      Item.allItems.push(new Item('pen', './img/pen.jpg'));
+      Item.allItems.push(new Item('pet-sweep', './img/pet-sweep.jpg'));
+      Item.allItems.push(new Item('scissors', './img/scissors.jpg'));
+      Item.allItems.push(new Item('shark', './img/shark.jpg'));
+      Item.allItems.push(new Item('sweep', './img/sweep.png'));
+      Item.allItems.push(new Item('tauntaun', './img/tauntaun.jpg'));
+      Item.allItems.push(new Item('unicorn', './img/unicorn.jpg'));
+      Item.allItems.push(new Item('water-can', './img/water-can.jpg'));
+      Item.allItems.push(new Item('wine-glass', './img/wine-glass.jpg'));
+    }
+    randomizeItems();
+  }
+  
+  
+  function storeItems() {
+    const stringifiedItems = JSON.stringify(Item.allItems);
+    console.log(stringifiedItems);
+    localStorage.setItem('totals', stringifiedItems);
+  }
+
   function renderItems() {
     const ulEle = document.getElementById('Item-Click')
     ulEle.innerHTML = '';
@@ -166,25 +216,25 @@ myButton.addEventListener('click', buttonEvent);
 
 //===========================Call Functions=================================
 
-Item.allItems.push(new Item('banana', './img/banana.jpg'));
-Item.allItems.push(new Item('bathroom', './img/bathroom.jpg'));
-Item.allItems.push(new Item('boots', './img/boots.jpg'));
-Item.allItems.push(new Item('breakfast', './img/breakfast.jpg'));
-Item.allItems.push(new Item('bubblegum', './img/bubblegum.jpg'));
-Item.allItems.push(new Item('Chair', './img/chair.jpg'));
-Item.allItems.push(new Item('cthulhu', './img/cthulhu.jpg'));
-Item.allItems.push(new Item('dog-duck', './img/dog-duck.jpg'));
-Item.allItems.push(new Item('dragon', './img/dragon.jpg'));
-Item.allItems.push(new Item('pen', './img/pen.jpg'));
-Item.allItems.push(new Item('pet-sweep', './img/pet-sweep.jpg'));
-Item.allItems.push(new Item('scissors', './img/scissors.jpg'));
-Item.allItems.push(new Item('shark', './img/shark.jpg'));
-Item.allItems.push(new Item('sweep', './img/sweep.png'));
-Item.allItems.push(new Item('tauntaun', './img/tauntaun.jpg'));
-Item.allItems.push(new Item('unicorn', './img/unicorn.jpg'));
-Item.allItems.push(new Item('water-can', './img/water-can.jpg'));
-Item.allItems.push(new Item('wine-glass', './img/wine-glass.jpg'));
-randomizeItems();
+itemRetrieval();
 
+// Item.allItems.push(new Item('banana', './img/banana.jpg'));
+// Item.allItems.push(new Item('bathroom', './img/bathroom.jpg'));
+// Item.allItems.push(new Item('boots', './img/boots.jpg'));
+// Item.allItems.push(new Item('breakfast', './img/breakfast.jpg'));
+// Item.allItems.push(new Item('bubblegum', './img/bubblegum.jpg'));
+// Item.allItems.push(new Item('Chair', './img/chair.jpg'));
+// Item.allItems.push(new Item('cthulhu', './img/cthulhu.jpg'));
+// Item.allItems.push(new Item('dog-duck', './img/dog-duck.jpg'));
+// Item.allItems.push(new Item('dragon', './img/dragon.jpg'));
+// Item.allItems.push(new Item('pen', './img/pen.jpg'));
+// Item.allItems.push(new Item('pet-sweep', './img/pet-sweep.jpg'));
+// Item.allItems.push(new Item('scissors', './img/scissors.jpg'));
+// Item.allItems.push(new Item('shark', './img/shark.jpg'));
+// Item.allItems.push(new Item('sweep', './img/sweep.png'));
+// Item.allItems.push(new Item('tauntaun', './img/tauntaun.jpg'));
+// Item.allItems.push(new Item('unicorn', './img/unicorn.jpg'));
+// Item.allItems.push(new Item('water-can', './img/water-can.jpg'));
+// Item.allItems.push(new Item('wine-glass', './img/wine-glass.jpg'));
 
-//===========================Chart=================================
+// randomizeItems();
