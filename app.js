@@ -58,7 +58,6 @@ function randomizeItems() {
       }
   }
     let left_Item = Item.allItems[leftIndex];
-    console.log(left_Item)
     let mid_Item = Item.allItems[midIndex];
     let right_Item = Item.allItems[rightIndex];
 
@@ -73,14 +72,9 @@ function renderThreeItems(left_Item, mid_Item, right_Item) {
 
 
   function eventHandler(event) {
-    // console.log(event.target);
-    // console.log()
     if (event.target === leftImg || event.target === rightImg || event.target === midImg) {
-      // console.log(leftImg)
       guesses--;
       if (event.target === leftImg) {
-        //find a way to reference the current left obj.
-        //update it with incrementing votes
         Item.allItems[leftIndex].vote++;
       } else if (event.target === rightImg){
         Item.allItems[rightIndex].vote++;
@@ -98,25 +92,65 @@ function renderThreeItems(left_Item, mid_Item, right_Item) {
   function buttonEvent(event) {
     if (event.target === myButton) {
       renderItems();
+      renderChart();
       myButton.removeEventListener('click', buttonEvent)
     }
   }
 
-  function createElement (tag, parent, text) {
-    let element = document.createElement(tag);
-    parent.appendChild(element);
-    if (text) {
-      element.textContent = text;
+  function renderChart() {
+    console.log('hi~')
+    const itemData = [];
+    const itemLabels = [];
+  
+    for (let item of Item.allItems) {
+      if(item.vote > 0){
+      itemData.push(item.vote);
+      itemLabels.push(item.name);
+      }
     }
-    return element;
+  var ctx = document.getElementById('itemChart').getContext('2d');
+  var myChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+          labels: itemLabels,
+          datasets: [{
+              label: 'Item Votes',
+              data: itemData,
+              backgroundColor: [
+                  'rgba(255, 99, 132, 0.2)',
+                  'rgba(54, 162, 235, 0.2)',
+                  'rgba(255, 206, 86, 0.2)',
+                  'rgba(75, 192, 192, 0.2)',
+                  'rgba(153, 102, 255, 0.2)',
+                  'rgba(255, 159, 64, 0.2)'
+              ],
+              borderColor: [
+                  'rgba(255, 99, 132, 1)',
+                  'rgba(54, 162, 235, 1)',
+                  'rgba(255, 206, 86, 1)',
+                  'rgba(75, 192, 192, 1)',
+                  'rgba(153, 102, 255, 1)',
+                  'rgba(255, 159, 64, 1)'
+              ],
+              borderWidth: 1
+          }]
+      },
+      options: {
+          scales: {
+              y: {
+                  beginAtZero: true
+              }
+          }
+      }
+  });
   }
 
   function renderItems() {
     const ulEle = document.getElementById('Item-Click')
     ulEle.innerHTML = '';
-    for (Item of Item.allItems) {
+    for (let item of Item.allItems) {
       const liEle = document.createElement('li')
-      liEle.textContent = `${Item.name} has ${Item.vote} clicks and was shown ${Item.shown} times.`
+      liEle.textContent = `${item.name} has ${item.vote} clicks and was shown ${item.shown} times.`
       ulEle.appendChild(liEle);
     }
  }
@@ -151,3 +185,6 @@ Item.allItems.push(new Item('unicorn', './img/unicorn.jpg'));
 Item.allItems.push(new Item('water-can', './img/water-can.jpg'));
 Item.allItems.push(new Item('wine-glass', './img/wine-glass.jpg'));
 randomizeItems();
+
+
+//===========================Chart=================================
